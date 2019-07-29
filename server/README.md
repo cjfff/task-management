@@ -28,5 +28,58 @@ CREATE TABLE `users` (
 ```
 
 
-### 网站
+### 门户网站
 - https://docs.nestjs.cn/6/firststeps
+
+
+### 笔记
+#### controller 是路由
+
+
+#### 提供者概念
+service repository foctory helper 都被认为是提供者, 通过 constructor 注入依赖关系，提供者不过是 @Injectable 注解的类
+
+
+
+```js
+src
+├── cats
+│    ├──dto
+│    │   └──create-cat.dto.ts
+│    ├── interfaces
+│    │       └──cat.interface.ts
+│    ├──cats.service.ts
+│    └──cats.controller.ts
+├──app.module.ts
+└──main.ts
+```
+
+
+```json
+{
+  "type": "mysql",
+  "host": "localhost",
+  "port": 3306,
+  "username": "root", // 输入你的mysql账号
+  "password": "root", //  密码
+  "database": "test", // 指定数据库名称
+  "synchronize": true,
+  "logging": false,
+  "entities": [ // mapping class的放的位置，指定放在shared下
+    "src/shared/entity/**/*.ts"
+  ],
+  "migrations": [ // 存放数据库版本管控migration的目录，指定放在shared下
+    "src/shared/migration/**/*.ts"
+  ],
+  "subscribers": [
+    "src/subscriber/**/*.ts"
+  ],
+  "cli": { // 预设使用CLI产生档案的目录，指定放在shared文件夹下
+    "entitiesDir": "src/shared/entity",
+    "migrationsDir": "src/shared/migration",
+    "subscribersDir": "src/shared/subscriber"
+  }
+}
+```
+
+npx typeorm entity:create -n User
