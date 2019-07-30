@@ -1,12 +1,18 @@
 import { Module } from '@nestjs/common';
+import { APP_INTERCEPTOR } from '@nestjs/core'
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Connection } from 'typeorm';
-import { UsersModule } from '@app/modules/users/users.module'
+import { UserModule } from '@app/modules/user/user.module'
+
+import { ErrorsInterceptor } from '@app/interceptors/errors.interceptor'
 
 @Module({
-  imports: [TypeOrmModule.forRoot(), UsersModule],
+  imports: [TypeOrmModule.forRoot(), UserModule],
   // controllers: [AppController],
-  // providers: [AppService],
+  providers: [{
+    provide: APP_INTERCEPTOR,
+    useClass: ErrorsInterceptor
+  }],
 })
 export class AppModule {
   constructor(private readonly connection: Connection) { }
