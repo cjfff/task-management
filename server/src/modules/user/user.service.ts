@@ -26,6 +26,14 @@ export class UserService {
     if (!this.cryptoUtil.checkPassword(password, user.password)) throw new HttpException('登录密码有误', 406)
   }
 
+
+  async register(user: User): Promise<void> {
+    const existing = await this.findOneByUsername(user.username);
+    if (existing) throw new HttpException('账号已存在', 409)
+    user.password = this.cryptoUtil.encryptPassword(user.password);
+    await this.userRepo.save(this.userRepo.create(user))
+  }
+
   /**
    * 通过登录账号查询用户
    * @param  {string} username 

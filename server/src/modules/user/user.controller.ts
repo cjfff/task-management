@@ -7,11 +7,13 @@ import { UserService } from './user.service'
 import { Result } from '@app/common/interfaces/result.interface';
 import { User } from './user.entity';
 
-@Controller('users')
+@Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) { }
 
-  async login(@Body() body: { account: string, password: string }): Promise<Result> {
+  @Post('login')
+  async login(@Body() body: { username: string, password: string }): Promise<Result> {
+    console.log(body)
     return { code: 0, message: '登录' }
   }
 

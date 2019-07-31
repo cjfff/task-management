@@ -5,6 +5,7 @@ import * as bodyParser from 'body-parser';
 import { Logger } from '@nestjs/common';
 import { environment, isProdMode, isDevMode } from '@app/app.environment';
 
+
 const port = process.env.PORT || 8888;
 
 // 替换 console 为更统一友好的
@@ -21,7 +22,6 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.use(bodyParser.json({ limit: '1mb' }))
   app.use(bodyParser.urlencoded({ extended: true }))
-
   return await app.listen(port);
 }
 
