@@ -1,4 +1,4 @@
-import { Injectable, HttpException, Inject } from '@nestjs/common';
+import { Injectable, HttpException, Inject, OnModuleInit } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -7,11 +7,28 @@ import { CryptoUtil } from '@app/common/utils/crypto.util';
 import { User } from './user.entity';
 
 @Injectable()
-export class UserService {
+export class UserService implements OnModuleInit {
+
+  async onModuleInit() {
+    if (await this.findOneByUsername('admin')) return;
+    // 初始化系统管理员
+    const admin = this.userRepo.create({
+      username: 'admin',
+      password: this.cryptoUtil.encryptPassword('i_am_admin_!'),
+      nickname: '系统管理员',
+      role: 'admin',
+      verifyEmail: 1,
+      email: '865553742@qq.com'
+    });
+    await this.userRepo.save(admin);
+  }
+
+
   constructor(
     @InjectRepository(User) private readonly userRepo: Repository<User>,
     @Inject(CryptoUtil) private readonly cryptoUtil: CryptoUtil
-  ) { }
+  ) {
+  }
 
   /**
    * 登录
@@ -42,6 +59,11 @@ export class UserService {
    */
   async findOneByUsername(username: string): Promise<User> {
     return await this.userRepo.findOne({ username })
+  }
+
+
+  async findOneById(id: number): Promise<User> {
+    return await this.userRepo.findOne(id);
   }
 
 }
