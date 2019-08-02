@@ -1,13 +1,9 @@
 const nodemailer = require("nodemailer");
-
-// const account = {
-//   user: process.env.EMAIL_ACCOUNT,
-//   pass: process.env.EMAIL_PASSWORD
-// };
+const { promisify } = require('util')
 
 const account = {
-  user: "xxx",
-  pass: "xxxi"
+  user: process.env.EMAIL_ACCOUNT,
+  pass: process.env.EMAIL_PASSWORD
 };
 
 let transporter = nodemailer.createTransport({
@@ -16,12 +12,12 @@ let transporter = nodemailer.createTransport({
   auth: {
     user: account.user,
     pass: account.pass
-
-    //  method: "x-login" // force custom method instead of choosing automatically from available methods
   }
 });
 
-transporter.verify(function(error, success) {
+transporter.sendMail = promisify(transporter.sendMail)
+
+transporter.verify(function (error, success) {
   if (error) {
     console.log(error);
   } else {
@@ -29,15 +25,12 @@ transporter.verify(function(error, success) {
   }
 });
 
-function sendEmail(message) {
-  transporter.sendMail({
-    from: "865553742@qq.com",
-    to: "770931917@qq.com",
-    subject: "Message title",
-    text: "Plaintext version of the message",
-    html: "<p>HTML version of the message</p>"
-  });
-}
+const sendEmail = ({ email, message}) => transporter.sendMail({
+  from: account.user,
+  to: email,
+  subject: "TaskManagement 邮箱验证提示", // 邮件主题
+  html: message // 内容
+});
 
 module.exports = {
   sendEmail
