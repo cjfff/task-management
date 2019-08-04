@@ -2,8 +2,11 @@ import 'dotenv/config'
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as bodyParser from 'body-parser';
+import { ValidationPipe } from '@app/common/pipes/validation.pipe';
+import { HttpExceptionFilter } from '@app/common/filters/error.filter';
 import { Logger } from '@nestjs/common';
 import { environment, isProdMode, isDevMode } from '@app/app.environment';
+import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
 
 
 const port = process.env.PORT || 8888;
@@ -22,6 +25,11 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.use(bodyParser.json({ limit: '1mb' }))
   app.use(bodyParser.urlencoded({ extended: true }))
+  app.useGlobalFilters(new HttpExceptionFilter());
+  app.useGlobalPipes(new ValidationPipe())
+  app.useGlobalInterceptors(
+    new LoggingInterceptor()
+  )
   return await app.listen(port);
 }
 
