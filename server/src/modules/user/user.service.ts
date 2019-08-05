@@ -37,10 +37,12 @@ export class UserService implements OnModuleInit {
    * @return Promise<void> 
    * @memberof UserService
    */
-  async login(username: string, password: string): Promise<void> {
+  async login(username: string, password: string): Promise<User> {
     const user = await this.findOneByUsername(username);
     if (!user) throw new HttpException('登录账号有误', 406);
     if (!this.cryptoUtil.checkPassword(password, user.password)) throw new HttpException('登录密码有误', 406)
+    delete user.password
+    return user
   }
 
 
@@ -51,6 +53,16 @@ export class UserService implements OnModuleInit {
     await this.userRepo.save(this.userRepo.create(user))
   }
 
+
+  /**
+   * 修改邮箱认证状态
+   */
+  async vertifyEmail(user: User, status: number = 1) {
+    return this.userRepo.update(user.id, { verifyEmail: status })
+  }
+
+
+
   /**
    * 通过登录账号查询用户
    * @param  {string} username 
@@ -58,7 +70,17 @@ export class UserService implements OnModuleInit {
    * @memberof UserService
    */
   async findOneByUsername(username: string): Promise<User> {
-    return await this.userRepo.findOne({ username })
+    return this.userRepo.findOne({ username })
+  }
+
+  /**
+   * 通过 email 查找用户
+   * @param  {string} email 
+   * @return Promise<User> 
+   * @memberof UserService
+   */
+  async findUserByEmail(email: string): Promise<User> {
+    return this.userRepo.findOne({ email })
   }
 
 

@@ -6,10 +6,10 @@ import { HelperModule } from '@app/modules/helper/helper.module';
 import { ErrorsInterceptor } from '@app/common/interceptors/errors.interceptor'
 
 @Module({
-  imports: [TypeOrmModule.forRoot(), HelperModule, UserModul],
+  imports: [TypeOrmModule.forRoot(), HelperModule, UserModule],
   // controllers: [AppController],
   providers: [{
-    provide: APP_INTERCEPTOR,
+    provide: APP_INTERCEPTOR, // 捕捉 controller 抛出的错误
     useClass: ErrorsInterceptor
   }],
 })

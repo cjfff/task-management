@@ -1,4 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, CreateDateColumn, UpdateDateColumn } from "typeorm";
+
+import { Task } from '../task/task.entity'
 
 @Entity()
 export class User {
@@ -16,16 +18,19 @@ export class User {
 
   @Column({ length: 255, comment: '密码' })
   password: string
-  
+
   @Column({ length: 255, comment: '邮箱' })
   email: string;
 
   @Column({ type: 'tinyint', comment: '是否验证邮箱 0 未验证，1 已验证', default: 0 })
   verifyEmail: number
 
-  @Column({ type: 'timestamp', comment: '更新时间' })
+  @UpdateDateColumn()
   updatedAt: string;
 
-  @Column({ type: 'timestamp', comment: '创建时间', onUpdate: 'CURRENT_TIMESTAMP' })
+  @CreateDateColumn()
   createdAt: string;
+
+  @OneToMany(type => Task, task => task.user)
+  tasks: Task[];
 }
