@@ -4,6 +4,7 @@ const bodyParser = require('koa-bodyparser')
 const app = new Koa()
 
 const vertify = require('./router/vertify')
+const users = require('./router/user')
 
 const PORT = process.env.PORT || 9999
 
@@ -13,6 +14,7 @@ app.use(bodyParser());
 
 // 引入路由
 app.use(vertify.routes(), vertify.allowedMethods());
+app.use(users.routes(), users.allowedMethods());
 
 app.listen(PORT, () => {
   console.log(`app running listening ${PORT}`)

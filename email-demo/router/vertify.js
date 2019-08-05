@@ -2,7 +2,7 @@ const Router = require('koa-router')
 const emailService = require('../utils/email')
 
 const router = new Router({
-  prefix: '/api/v1/vertify'
+  prefix: '/spaas/api/v1/vertify'
 })
 
 
@@ -25,6 +25,16 @@ router.post('/', async (ctx) => {
     message
   }
 
+})
+
+router.get('/', (ctx) => {
+  ctx.body = {
+    code: 0,
+    message: 'success',
+    data: {
+      username: ''
+    }
+  }
 })
 
 
