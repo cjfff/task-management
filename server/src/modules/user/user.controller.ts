@@ -53,7 +53,6 @@ export class UserController {
   async sendVertifyEmail(@Request() req): Promise<Result> {
     const user: User = req.user;
     const accessToken = geneateVerifyCode(20) // 生成 token
-    console.log(this.$emailStore)
     this.$emailStore.set(user.email, accessToken)
     await this.emailServer.sendMail({
       to: user.email,

@@ -1,5 +1,5 @@
 const Router = require('koa-router')
-const emailService = require('../utils/email')
+const emailHelper = require('../utils/email')
 
 const router = new Router({
   prefix: '/spaas/api/v1/vertify'
@@ -11,9 +11,10 @@ router.post('/', async (ctx) => {
 
   let message = 'success'
   try {
-    await emailService.sendEmail({
-      message: `${Date.now()} hello world`,
-      email
+    await emailHelper.sendEmail({
+      content: `${Date.now()} hello world`,
+      email,
+      title: '【Task任务系统邮箱验证】'
     })
   } catch (error) {
     console.log(error);
