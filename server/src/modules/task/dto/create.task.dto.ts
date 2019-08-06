@@ -1,5 +1,6 @@
-import { IsString, IsNotEmpty } from 'class-validator';
+import { IsString, IsNotEmpty, IsEnum } from 'class-validator';
 import { User } from '../../user/user.entity'
+import { taskStatus } from '../task.entity'
 
 export class CreateTaskDto {
   @IsNotEmpty()
@@ -12,4 +13,7 @@ export class CreateTaskDto {
 
 
   user?: User;
+
+  @IsEnum(taskStatus)
+  readonly status?: number;
 }
