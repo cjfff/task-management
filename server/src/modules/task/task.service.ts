@@ -64,7 +64,39 @@ export class TaskService {
      * @return Promise<Task[]> 
      * @memberof TaskService
      */
-    async findAll(userId: number): Promise<Task[]> {
-        return this.taskRepo.find({ where: { user: { id: userId } } })
+    // : Promise<>
+    async findAll(userId: number, options: any) {
+        const pagesize = Number(options.pageSize) || 10;
+        const page = Number(options.page) * pagesize || 0;
+        const orderByCreateAt = options.currentSortOrder
+            ? options.currentSortOrder.toUpperCase()
+            : 'DESC';
+        let params = {};
+        let term = '';
+        if (options.search) {
+            (term =
+                'task.title Like :title OR task.content Like :content AND task.userId Like :userId'),
+                (params = {
+                    title: `%${options.search}%`,
+                    content: `%${options.search}%`,
+                    userId: `%${userId}%`
+                });
+        }
+
+        const [data, total = 0] = await this.taskRepo
+            .createQueryBuilder('taskRepo')
+            // .leftJoinAndSelect('taskRepo.user', 'user')
+            // .leftJoinAndSelect('taskRepo.category', 'category')
+            // .leftJoinAndSelect('taskRepo.tags', 'tags')
+            .where(term, params)
+            .orderBy({
+                'createdAt': orderByCreateAt,
+            })
+            .offset(page)
+            .limit(pagesize)
+            .getManyAndCount();
+
+        return { data, total, page: page + 1 };
+        // return this.taskRepo.find({ where: { user: { id: userId } } })
     }
 }

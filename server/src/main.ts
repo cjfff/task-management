@@ -7,6 +7,7 @@ import { HttpExceptionFilter } from '@app/common/filters/error.filter';
 import { Logger } from '@nestjs/common';
 import { environment, isProdMode, isDevMode } from '@app/app.environment';
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 
 const port = process.env.PORT || 8888;
@@ -30,6 +31,20 @@ async function bootstrap() {
   app.useGlobalInterceptors(
     new LoggingInterceptor()
   )
+
+
+  const options = new DocumentBuilder()
+    .setBasePath('/api/v1')
+    .setTitle('TODO example')
+    .setDescription('The TODO API description')
+    .setVersion('1.0')
+    .addTag('user')
+    .addTag('task')
+    .addBearerAuth()
+    .build();
+  const document = SwaggerModule.createDocument(app, options);
+  SwaggerModule.setup('api', app, document);
+  app.setGlobalPrefix('api/v1');
   return await app.listen(port);
 }
 

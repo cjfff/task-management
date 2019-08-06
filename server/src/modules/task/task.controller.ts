@@ -1,10 +1,18 @@
-import { Controller, Post, Req, Param, Delete, Body, Put, Get, UseGuards, HttpException } from '@nestjs/common'
+import { Controller, Post, Req, Param, Delete, Body, Put, Get, UseGuards, HttpException, Query } from '@nestjs/common'
 import { Result } from '@app/common/interfaces/result.interface';
 import { CreateTaskDto } from './dto/create.task.dto'
 import { AuthGuard } from '@nestjs/passport';
 import { TaskService } from './task.service'
 import { UpdateTaskDto } from './dto/update.task.dto'
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiUseTags,
+} from '@nestjs/swagger';
 
+@ApiBearerAuth()
+@ApiUseTags('task')
 @Controller('task')
 export class TaskController {
 
@@ -28,7 +36,7 @@ export class TaskController {
     if (!task) throw new HttpException('删除的帖子不存在', 404)
     if (task.user.id !== req.user.id) throw new HttpException('您不是该任务创建者，无法删除', 409)
     await this.taskService.remove(id)
-    return { code: 0, message: '删除成功', data: true }
+    return { code: 0, message: '删除成功', payload: true }
   }
 
   @UseGuards(AuthGuard('jwt'))
@@ -38,19 +46,19 @@ export class TaskController {
     if (!task) throw new HttpException('删除的帖子不存在', 404)
     if (task.user.id !== req.user.id) throw new HttpException('您不是该任务创建者，无法修改', 409)
     await this.taskService.update(id, updateInput);
-    return { code: 0, message: '修改成功', data: true }
+    return { code: 0, message: '修改成功', payload: true }
   }
 
   @UseGuards(AuthGuard('jwt'))
   @Get()
-  async findAll(@Req() req): Promise<Result> {
-    const data = await this.taskService.findAll(req.user.id)
-    return { code: 200, message: 'success', data };
+  async findAll(@Req() req, @Query() query): Promise<Result> {
+    const payload = await this.taskService.findAll(req.user.id, query || {})
+    return { code: 200, message: 'success', payload };
   }
 
   @Get(':id')
   async findOne(@Param('id') id: number): Promise<Result> {
-    const data = await this.taskService.findOneById(id)
-    return { code: 200, message: 'success', data };
+    const payload = await this.taskService.findOneById(id)
+    return { code: 200, message: 'success', payload };
   }
 }

@@ -1,4 +1,5 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, CreateDateColumn, UpdateDateColumn } from "typeorm";
+import { ApiModelProperty } from '@nestjs/swagger';
 
 import { User } from '../user/user.entity'
 
@@ -9,7 +10,7 @@ export enum taskStatus {
 }
 @Entity()
 export class Task {
-
+  
   @PrimaryGeneratedColumn()
   id: number;
 
